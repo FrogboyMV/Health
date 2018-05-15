@@ -83,147 +83,170 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 * **MP State Management** - Configured just like State Management but for MP.
 * **TP State Management** - Configured just like State Management but for TP.  Not sure how useful this one is but it’s here anyway.
 
-Conditions - Add conditions that alter the way specific Health aspects function for all party members.  Many different environments can change the way Health HP work.  Going underwater will deplete your Oxygen.  An icy tundra could freeze an unprepared adventurer to death.  Travelling through a desert can give you heat stroke and drain your Water HP quicker.  A stale bog might have a chance to infect you with a rare disease.  No longer can your adventurers brave harsh conditions without feeling it’s effects.  Some Conditions may not affect Health at all but are just used to turn day into night or make ranged attacks less effective if it happens to be especially windy outside.
-Name - Name of the Condition.
-Description - Description of the Condition.
-Icon Id - In the top right-hand corner of the default Status Window, this icon will show when this Condition is active.
-Adjust Health - Conditions change the way Health HP normally functions.  Some Health aspects, like Food and Water, naturally deplete over time.  Others, like Oxygen, are naturally available.  Conditions change this.  Getting sealed in an airtight room will deprive you of Oxygen.  Cold weather will lower your Body Temperature.  You could even have it so that just hanging out at the tavern raise your Water HP.
-Health Abbr - Abbreviation for the aspect of Health that is affected.
-Control - Resets the ways that the gauge operates.  Normally, Oxygen would increment over time and usually be maxed out but if the party went underwater, their Oxygen would start decreasing instead.
-Adjust Value - Adds to the default Health Value.
-Adjust Steps - Adds to the default Every X Steps.
-Lower Health Range - Some conditions can only lower a value so far.  Just regular cold weather isn’t going to kill anyone.  It might just lower their body temperature down to a certain point and no more.  Thin air in the mountains won’t suffocate you but it may deplete some of your Oxygen.  This value is the lowest that the Condition can drop you to.
-Upper Health Range - Same as the Lower Health Range but applies to the upper bound.
-Immune - Disables Health adjustments when true.
-Set Common Event - Common Event that will run when this Condition becomes active.  Say you have a Night condition.  You could tint the screen dark.  A Cold condition may have a chance to make it start snowing.  Perhaps you need remove other conditions when this one becomes active.
-Remove Common Event - Same as the Add version but triggers when this Condition is removed.
-Immune - Actors, classes, races, items, equipment and states that make one immune to this condition are defined here.  
-Formula Config - By now, you might be wondering how these Health attributes work in battle.  For the most part, they work just like normal HP.  This changes some dynamics, though.  If you have Rest HP, why have a Sleep spell that succeeds or fails based on random chance?  You could make Sleep do Rest damage now.  Charm and Fascination could attack the mind.  You could even have a suffocation spell suck the air out your enemy’s lungs (assuming they have lungs).  Your Skill list is about to get a lot more interesting.
-Name - The name of this formula.  The editor doesn’t have any way to handle a Skill that does damage to HP, Food and Water.  So to make this possible, you can now enter the name of a formula here and place that name within quotes in the formula box of a Skill or Item.  If you enter ‘quake’ or “quake” into the formula box (with the quotes), the Skill or Item will reference the formula with the name quake.
-Damage - Define however many damage formulas you need and which aspects of Health are affected.  Use hp, mp or tp if you want to affect these attributes.
-Health Abbr - The Health abbreviation this formula applies to.
-Formula - Enter the formula just as you would in the normal formula box except now you get a nice big, multi-line note box.  How freakin’ sweet is that?
-Flip Damage - If the damage type is set to HP Damage, it flips to HP Recovery for this Health attribute.  HP Recovery becomes HP Damage.  Sometimes you may need to damage some health while recovering one or more others (or vise versa).
-Min 1 Damage - This formula will always do at least 1 damage.
+**Conditions** - Add conditions that alter the way specific Health aspects function for all party members.  Many different environments can change the way Health HP work.  Going underwater will deplete your Oxygen.  An icy tundra could freeze an unprepared adventurer to death.  Travelling through a desert can give you heat stroke and drain your Water HP quicker.  A stale bog might have a chance to infect you with a rare disease.  No longer can your adventurers brave harsh conditions without feeling it’s effects.  Some Conditions may not affect Health at all but are just used to turn day into night or make ranged attacks less effective if it happens to be especially windy outside.
+* **Name** - Name of the Condition.
+* **Description** - Description of the Condition.
+* **Icon Id** - In the top right-hand corner of the default Status Window, this icon will show when this Condition is active.
+* **Adjust Health** - Conditions change the way Health HP normally functions.  Some Health aspects, like Food and Water, naturally deplete over time.  Others, like Oxygen, are naturally available.  Conditions change this.  Getting sealed in an airtight room will deprive you of Oxygen.  Cold weather will lower your Body Temperature.  You could even have it so that just hanging out at the tavern raise your Water HP.
+  * **Health Abbr** - Abbreviation for the aspect of Health that is affected.
+  * **Control** - Resets the ways that the gauge operates.  Normally, Oxygen would increment over time and usually be maxed out but if the party went underwater, their Oxygen would start decreasing instead.
+  * **Adjust Value** - Adds to the default Health Value.
+  * **Adjust Steps** - Adds to the default Every X Steps.
+  * **Lower Health Range** - Some conditions can only lower a value so far.  Just regular cold weather isn’t going to kill anyone.  It might just lower their body temperature down to a certain point and no more.  Thin air in the mountains won’t suffocate you but it may deplete some of your Oxygen.  This value is the lowest that the Condition can drop you to.
+  * **Upper Health Range** - Same as the Lower Health Range but applies to the upper bound.
+  * **Immune** - Disables Health adjustments when true.
+* **Set Common Event** - Common Event that will run when this Condition becomes active.  Say you have a Night condition.  You could tint the screen dark.  A Cold condition may have a chance to make it start snowing.  Perhaps you need remove other conditions when this one becomes active.
+* **Remove Common Event** - Same as the Add version but triggers when this Condition is removed.
+* **Immune** - Actors, classes, races, items, equipment and states that make one immune to this condition are defined here.  
+
+**Formula Config** - By now, you might be wondering how these Health attributes work in battle.  For the most part, they work just like normal HP.  This changes some dynamics, though.  If you have Rest HP, why have a Sleep spell that succeeds or fails based on random chance?  You could make Sleep do Rest damage now.  Charm and Fascination could attack the mind.  You could even have a suffocation spell suck the air out your enemy’s lungs (assuming they have lungs).  Your Skill list is about to get a lot more interesting.
+* **Name** - The name of this formula.  The editor doesn’t have any way to handle a Skill that does damage to HP, Food and Water.  So to make this possible, you can now enter the name of a formula here and place that name within quotes in the formula box of a Skill or Item.  If you enter ‘quake’ or “quake” into the formula box (with the quotes), the Skill or Item will reference the formula with the name quake.
+* **Damage** - Define however many damage formulas you need and which aspects of Health are affected.  Use hp, mp or tp if you want to affect these attributes.
+  * **Health Abbr** - The Health abbreviation this formula applies to.
+  * **Formula** - Enter the formula just as you would in the normal formula box except now you get a nice big, multi-line note box.  How freakin’ sweet is that?
+  * **Flip Damage** - If the damage type is set to HP Damage, it flips to HP Recovery for this Health attribute.  HP Recovery becomes HP Damage.  Sometimes you may need to damage some health while recovering one or more others (or vise versa).
+  * **Min 1 Damage** - This formula will always do at least 1 damage.
 Register as Damage - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
+* **Register as Damage** - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
 
-Actor Config - Configure actor specific properties.
-Description - Description so you know what this entry is. Recommended but not required.
-Actor Id - The actor these properties apply to.
-Custom Terms - Change the names for HP, MP and/or TP for this actor.  Sometimes, these terms just don’t fit for everyone, especially MP.
-HP Name - Change the term HP for this actor.
-HP Abbr - Change the term HP (abbr.) for this actor.
-MP Name - Change the term HP for this actor.
-MP Abbr - Change the term HP (abbr.) for this actor.
-TP Name - Change the term HP for this actor.
-TP Abbr - Change the term HP (abbr.) for this actor.
+**Actor Config** - Configure actor specific properties.
+* **Description** - Description so you know what this entry is. Recommended but not required.
+* **Actor Id** - The actor these properties apply to.
+* **Custom Terms** - Change the names for HP, MP and/or TP for this actor.  Sometimes, these terms just don’t fit for everyone, especially MP.
+  * **HP Name** - Change the term HP for this actor.
+  * **HP Abbr** - Change the term HP (abbr.) for this actor.
+  * **MP Name** - Change the term HP for this actor.
+  * **MP Abbr** - Change the term HP (abbr.) for this actor.
+  * **TP Name** - Change the term HP for this actor.
+  * **TP Abbr** - Change the term HP (abbr.) for this actor.
 
-Class Config - You said that these were just like real HP.  That means that my characters can gain Health HP as they level up, right?  Yep, of course they can.
-Description - Description so you know what this entry is. Recommended but not required.
-Class Id - The class these properties apply to.
-Level Up - Configure how Health HP increases on level up.
-Health Abbr - The Health abbreviation.  You know the drill by now.
-Starting Max HP - Use this to overwrite the default Max HP. Leave at 0 to use the default as defined in Health Config.
-Lower Level Gain - Each level, an actor with this class will gain at least this amount of additional Health HP.
-Upper Level Gain - Each level, an actor with this class will gain no more than this amount of additional Health HP.
+**Class Config** - You said that these were just like real HP.  That means that my characters can gain Health HP as they level up, right?  Yep, of course they can.
+* **Description** - Description so you know what this entry is. Recommended but not required.
+* **Class Id** - The class these properties apply to.
+* **Level Up** - Configure how Health HP increases on level up.
+  * **Health Abbr** - The Health abbreviation.  You know the drill by now.
+  * **Starting Max HP** - Use this to overwrite the default Max HP. Leave at 0 to use the default as defined in Health Config.
+  * **Lower Level Gain** - Each level, an actor with this class will gain at least this amount of additional Health HP.
+  * **Upper Level Gain** - Each level, an actor with this class will gain no more than this amount of additional Health HP.
 
-Use Health Battle Status - The actor battle status window has been reimagined to display all of your Health HP gauges.  If you don’t want to use this, set this to false.
+**Use Health Battle Status** - The actor battle status window has been reimagined to display all of your Health HP gauges.  If you don’t want to use this, set this to false.
 
-Use Custom Actor Terms - Custom Actor Terms for HP, MP and TP require overwriting core code so this option must be explicitly enabled to use.  Overwriting core code can cause incompatibilities with other plugins so I’m giving you way to shut this off if you need to.
+**Use Custom Actor Terms** - Custom Actor Terms for HP, MP and TP require overwriting core code so this option must be explicitly enabled to use.  Overwriting core code can cause incompatibilities with other plugins so I’m giving you way to shut this off if you need to.
 
-Add to Formulas - If you want to use any of the actor’s Health HP in a formula, turn this option on.  If not, you can leave it off.
+**Add to Formulas** - If you want to use any of the actor’s Health HP in a formula, turn this option on.  If not, you can leave it off.
 
-Save Health Object - Setting this to true allows you to modify the $dataHealth object, which contains all of the information within the plugin parameters, when the player saves the game.  By default, this object is built from the plugin parameters when a new game is started or a saved game is loaded.  This is usually what you’ll want.  If, for some reason, you need to alter this data in-game and have those changes persist until the end of the game, you’ll need to turn this option on.
+**Save Health Object** - Setting this to true allows you to modify the $dataHealth object, which contains all of the information within the plugin parameters, when the player saves the game.  By default, this object is built from the plugin parameters when a new game is started or a saved game is loaded.  This is usually what you’ll want.  If, for some reason, you need to alter this data in-game and have those changes persist until the end of the game, you’ll need to turn this option on.
 
-Limit Party Size - Health effects will only be applied to the first X members of the party.  This option is mainly used for games that only want the lead actor to have to manage their health while other actors are temporary characters that are assumed to be managing their own health.  It can also be used if you have reserve actors and you don’t want their health levels falling.
+**Limit Party Size** - Health effects will only be applied to the first X members of the party.  This option is mainly used for games that only want the lead actor to have to manage their health while other actors are temporary characters that are assumed to be managing their own health.  It can also be used if you have reserve actors and you don’t want their health levels falling.
 
-Style
+## Style
 
-Show Max Health - The default Status screen now shows the different levels of health alongside the actor’s attributes and equipment.  The Health HP is shown as Current HP/Max HP.  If you only want to show the current HP, turn this off.
+**Show Max Health** - The default Status screen now shows the different levels of health alongside the actor’s attributes and equipment.  The Health HP is shown as Current HP/Max HP.  If you only want to show the current HP, turn this off.
 
-Color Config - The default Status screen’s attributes and Health HP now display with color gauges.  You can configure those gauges here.
-Attributes - Colors for Attribute gauges.
-Min Percent - Minimum percentage for this color.
-Max Percent - Maximum percentage for this color.
-Start Color - Hex color that this type of gauge starts with on the left.
-End Color - Hex color that this type of gauge ends with on the right.
-Decremental - Define the colors for Decremental Health gauges.
-Equilibrium - Define the colors for Equilibrium Health gauges.
-Incremental - Define the colors for Incremental Health gauges.
+**Color Config** - The default Status screen’s attributes and Health HP now display with color gauges.  You can configure those gauges here.
+* **Attributes** - Colors for Attribute gauges.
+  * **Min Percent** - Minimum percentage for this color.
+  * **Max Percent** - Maximum percentage for this color.
+  * **Start Color** - Hex color that this type of gauge starts with on the left.
+  * **End Color** - Hex color that this type of gauge ends with on the right.
+* **Decremental** - Define the colors for Decremental Health gauges.
+* **Equilibrium** - Define the colors for Equilibrium Health gauges.
+* **Incremental** - Define the colors for Incremental Health gauges.
 
-Battle Config - Health HP has been integrated with the battle system.  Because actors and enemies can now have many different HPs to take into consideration, I implemented visual gauges to more easily present this information to your players.
-Use Enemy HP Gauge - Enable or disable Health HP Gauges in battle.
-Use Damage Popup - Normally, HP damage pops up when damage is done.  If you are using the visual gauges, you probably want to suppress the default behavior.  But if you still want the normal HP damage numbers to popup, you can turn this on.
-Enemy Gauge Width - Set the width of enemies visual Health gauges.
-Battle Status Config - If you’ve enabled Use Health Battle Status then the default actor battle status window will replaced with one more suitable.  This is where you can configure how this looks.  Every game is different and there’s no telling how many Health attributes you are using in your game and which ones are relevant in battle.
-Actor Face Height - Height in pixels for the actor’s face image.
-Gauge Rows - Number of rows for Health gauges.
-Gauge Cols - Number of columns for Health gauges.
-Name Left Padding - Adjust the padding on the left for the HP text.
-Value Right Padding - Adjust the padding on the right for the HP value.
-Top Padding - Adjust the padding on the top if you need to push the text down some.
-Font Size - Font size for battle gauge text.
-Gauges - Configure the gauges in the default Battle Status Window.  They will appear in the order that they are listed.
-Health Abbr - The Health abbreviation.
-Columns - Number of columns that this Health gauge takes up.
-Show Name - Show the health abbreviation on the battle gauge.
-Show Value - Show the health value on the battle gauge.
+**Battle Config** - Health HP has been integrated with the battle system.  Because actors and enemies can now have many different HPs to take into consideration, I implemented visual gauges to more easily present this information to your players.
+* **Use Enemy HP Gauge** - Enable or disable Health HP Gauges in battle.
+* **Use Damage Popup** - Normally, HP damage pops up when damage is done.  If you are using the visual gauges, you probably want to suppress the default behavior.  But if you still want the normal HP damage numbers to popup, you can turn this on.
+* **Enemy Gauge Width** - Set the width of enemies visual Health gauges.
+* **Battle Status Config** - If you’ve enabled Use Health Battle Status then the default actor battle status window will replaced with one more suitable.  This is where you can configure how this looks.  Every game is different and there’s no telling how many Health attributes you are using in your game and which ones are relevant in battle.
+  * **Actor Face Height** - Height in pixels for the actor’s face image.
+  * **Gauge Rows** - Number of rows for Health gauges.
+  * **Gauge Cols** - Number of columns for Health gauges.
+  * **Name Left Padding** - Adjust the padding on the left for the HP text.
+  * **Value Right Padding** - Adjust the padding on the right for the HP value.
+  * **Top Padding** - Adjust the padding on the top if you need to push the text down some.
+  * **Font Size** - Font size for battle gauge text.
+  * **Gauges** - Configure the gauges in the default Battle Status Window.  They will appear in the order that they are listed.
+  * **Health Abbr** - The Health abbreviation.
+  * **Columns** - Number of columns that this Health gauge takes up.
+  * **Show Name** - Show the health abbreviation on the battle gauge.
+  * **Show Value** - Show the health value on the battle gauge.
 
-Status Window - The default RPG Maker MV status window can be configured to show the Health information.
-Display Race - Nickname is replaced with Race if FROG Race is installed.
-Column 1 - Choose what is displayed in the first column.
-Attributes - Display the actor’s attributes like Attack, Defense etc.
-Equipment - Display the actor’s equipment.
-Health Stats - Display the actor’s Health stats.
-Health Stats 1 - If Health Stats chosen, list them in display order.
-Column 2 - Choose what is displayed in the second column.
-Health Stats 2 - If Health Stats chosen, list them in display order.
-Column 3 - Choose what is displayed in the third column.
-Health Stats 3 - If Health Stats chosen, list them in display order.
+**Status Window** - The default RPG Maker MV status window can be configured to show the Health information.
+* **Display Race** - Nickname is replaced with Race if FROG Race is installed.
+* **Column 1** - Choose what is displayed in the first column.
+  * **Attributes** - Display the actor’s attributes like Attack, Defense etc.
+  * **Equipment** - Display the actor’s equipment.
+  * **Health Stats** - Display the actor’s Health stats.
+* **Health Stats 1** - If Health Stats chosen, list them in display order.
+* **Column 2** - Choose what is displayed in the second column.
+* **Health Stats 2** - If Health Stats chosen, list them in display order.
+* **Column 3** - Choose what is displayed in the third column.
+* **Health Stats 3** - If Health Stats chosen, list them in display order.
 
-Text Manager - Configure how some of the text is displayed, mostly related to the battle log.
-Actor Health Damage - Sets the text format for Actor Health Damage. 1 = Actor Name, 2 = Damage, 3 = Damage Type.
-Actor Health Drain - Sets the text format for Actor Health Damage. 1 = Actor Name, 2 = Drain, 3 = Damage Type.
-Actor Health Recovery - Sets the text format for Actor Health Drain. 1 = Actor Name, 2 = Recovery, 3 = Damage Type.
-Enemy Health Damage - Sets the text format for Enemy Health Recovery. 1 = Actor Name, 2 = Damage, 3 = Damage Type.
-Enemy Health Drain - Sets the text format for Enemy Health Drain. 1 = Actor Name, 2 = Drain, 3 = Damage Type.
-Enemy Health Recovery - Sets the text format for Enemy Health Recovery. 1 = Actor Name, 2 = Recovery, 3 = Damage Type.
+**Text Manager** - Configure how some of the text is displayed, mostly related to the battle log.
+* **Actor Health Damage** - Sets the text format for Actor Health Damage. 1 = Actor Name, 2 = Damage, 3 = Damage Type.
+* **Actor Health Drain** - Sets the text format for Actor Health Damage. 1 = Actor Name, 2 = Drain, 3 = Damage Type.
+* **Actor Health Recovery** - Sets the text format for Actor Health Drain. 1 = Actor Name, 2 = Recovery, 3 = Damage Type.
+* **Enemy Health Damage** - Sets the text format for Enemy Health Recovery. 1 = Actor Name, 2 = Damage, 3 = Damage Type.
+* **Enemy Health Drain** - Sets the text format for Enemy Health Drain. 1 = Actor Name, 2 = Drain, 3 = Damage Type.
+* **Enemy Health Recovery** - Sets the text format for Enemy Health Recovery. 1 = Actor Name, 2 = Recovery, 3 = Damage Type.
 
-Plugin Commands
+
+## Plugin Commands
 
 These commands will give you more control over your character’s health scores.
 Any [value] parameter can take a number such as 20 or a percentage like 20%.
 
 Get the current health or max health value for this aspect
+```javascript
 HEALTH GETHP [actorId] [abbreviation] [variableId]
 HEALTH GETMHP [actorId] [abbreviation] [variableId]
+```
 
 Set the exact value for a specific aspect of health
+```javascript
 HEALTH SETHP [actorId] [abbreviation] [value]
+```
 
 Adds to the value for a specific aspect of health
+```javascript
 HEALTH ADDHP [actorId] [abbreviation] [value]
+```
 
 Subtracts from the value for a specific aspect of health
+```javascript
 HEALTH REMHP [actorId] [abbreviation] [value]
+```
 
 Sets health of all party members
+```javascript
 HEALTH SETHPALL [abbreviation] [value]
+```
 
 Adds health to all party members
+```javascript
 HEALTH ADDHPALL [abbreviation] [value]
+```
 
 Subtracts health to all party members
+```javascript
 HEALTH REMHPALL [abbreviation] [value]
+```
 
 Test to see if a Condition is active
+```javascript
 HEALTH ISCONDACTIVE [condition name] [switch]
+```
 
 Sets a Condition as active
+```javascript
 HEALTH SETCOND [condition name]
+```
 
 Removes an active Condition
+```javascript
 HEALTH REMCOND [condition name]
+```
 
 
 ## Terms of Use
@@ -235,9 +258,4 @@ Credit Frogboy in your work.
 
 ## Changelog
 
-* Version 1.0 - Initial release
-* Version 1.1 - Talent-based Traits display what you'll gain when adding ranks.
-* Version 1.2
-    * Added automatic distribution of points per actor if desired.
-    * Bug fix for class changes.
-    * Now requires FROG_Core
+* Version 0.9 - Beta release
