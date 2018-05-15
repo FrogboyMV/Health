@@ -112,6 +112,8 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 Register as Damage - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
 * **Register as Damage** - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
 
+![Formula](/img/snap05.png)
+
 **Actor Config** - Configure actor specific properties.
 * **Description** - Description so you know what this entry is. Recommended but not required.
 * **Actor Id** - The actor these properties apply to.
