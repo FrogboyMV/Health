@@ -29,7 +29,8 @@ That’s where FROG_Health comes into play.  Instead of taking the easy route an
 * Create Skills and Items that damage multiple forms of Health HP.
 * Customize your actor's battle status window and enemy visual Health gauges.
 * Customize the standard Status window to show each actor's Health HP.
-* Integration with FROG Race Core
+* Integration with FROG Race Core.
+* Configure Health HP to deplete normal HP, MP or a different Health HP if it falls into the negative.
 
 
 ## How to Use
