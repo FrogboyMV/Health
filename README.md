@@ -29,8 +29,6 @@ That’s where FROG_Health comes into play.  Instead fo taking the easy route an
 * Customize the standard Status window to show each actor's Health HP.
 * Integration with FROG Race Core
 
-![status](/img/snap02.png)
-
 
 ## How to Use
 
@@ -77,6 +75,8 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 * **Recover All** - Health HP recovers to optimum value when Recover All command is executed.
 * **Battle Gauge Color** - Customize the battle gauge color.
 * **Drain Health Abbr** - Normally, when a Health HP bar runs out, that’s it.  Most of the time, something really bad happens like they die, fall asleep, go insane or whatever.  But maybe you don’t want it to be so drastic.  Maybe running out food or water doesn’t kill you but starts draining your normal HP.  In systems where normal HP is split into different Health HP stats like (Head, Body, Arms and Legs), you probably want negative health in those areas to start damaging the character’s normal HP.  By specifying an abbreviation, when this Health is at critical levels as defined by the Control parameter, excess is applied to the other Health stat.  You can also use HP or MP here.
+
+![status](/img/snap04.png)
 
 **Basic State Management** - Wouldn’t it be nice if have low HP, MP or TP could also apply States like Health HP does?  Wouldn’t it be nice we even went a step farther and granted a nice little bonus when these attributes are nearly full?  Of course it would so that why you can now extend this kind of functionality to your normal HP stats.
 * **HP State Management** - Configured just like State Management but for normal HP.
@@ -139,6 +139,7 @@ Register as Damage - This Skill counts as a hit and will activate a State's Remo
 
 **Limit Party Size** - Health effects will only be applied to the first X members of the party.  This option is mainly used for games that only want the lead actor to have to manage their health while other actors are temporary characters that are assumed to be managing their own health.  It can also be used if you have reserve actors and you don’t want their health levels falling.
 
+
 ## Style
 
 **Show Max Health** - The default Status screen now shows the different levels of health alongside the actor’s attributes and equipment.  The Health HP is shown as Current HP/Max HP.  If you only want to show the current HP, turn this off.
@@ -152,6 +153,8 @@ Register as Damage - This Skill counts as a hit and will activate a State's Remo
 * **Decremental** - Define the colors for Decremental Health gauges.
 * **Equilibrium** - Define the colors for Equilibrium Health gauges.
 * **Incremental** - Define the colors for Incremental Health gauges.
+
+![status](/img/snap03.png)
 
 **Battle Config** - Health HP has been integrated with the battle system.  Because actors and enemies can now have many different HPs to take into consideration, I implemented visual gauges to more easily present this information to your players.
 * **Use Enemy HP Gauge** - Enable or disable Health HP Gauges in battle.
@@ -170,6 +173,8 @@ Register as Damage - This Skill counts as a hit and will activate a State's Remo
   * **Columns** - Number of columns that this Health gauge takes up.
   * **Show Name** - Show the health abbreviation on the battle gauge.
   * **Show Value** - Show the health value on the battle gauge.
+
+![status](/img/snap02.png)
 
 **Status Window** - The default RPG Maker MV status window can be configured to show the Health information.
 * **Display Race** - Nickname is replaced with Race if FROG Race is installed.
