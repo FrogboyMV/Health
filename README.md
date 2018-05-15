@@ -109,7 +109,6 @@ This plugin has a crap-ton of parameters so that you can configure this system w
   * **Formula** - Enter the formula just as you would in the normal formula box except now you get a nice big, multi-line note box.  How freakin’ sweet is that?
   * **Flip Damage** - If the damage type is set to HP Damage, it flips to HP Recovery for this Health attribute.  HP Recovery becomes HP Damage.  Sometimes you may need to damage some health while recovering one or more others (or vise versa).
   * **Min 1 Damage** - This formula will always do at least 1 damage.
-Register as Damage - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
 * **Register as Damage** - This Skill counts as a hit and will activate a State's Remove by Damage property.  A Sleep skill that wakes up its target isn’t of much use so you should turn this off in situations like this.
 
 ![Formula](/img/snap05.png)
