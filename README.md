@@ -268,3 +268,6 @@ Credit Frogboy in your work.
 ## Changelog
 
 * Version 0.9 - Beta release
+* Version 0.9.01
+    * Fixed crash when adjustments property is deleted.
+    * Fixed bug where enemy gauges don't disappear.
