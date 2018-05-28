@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.8 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.01 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -536,6 +536,9 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * ============================================================================
  *
  * Version 0.9 - Beta
+ * Version 0.9.01 - Bug fixes
+ *     Fixed crash when adjustments property is deleted.
+ *     Fixed bug where enemy gauges don't disappear.
  *
  * ============================================================================
  *
@@ -1793,7 +1796,7 @@ FROG.Health.DataManager_IsDatabaseLoaded = DataManager.isDatabaseLoaded;
 DataManager.isDatabaseLoaded = function () {
     if (!FROG.Health.DataManager_IsDatabaseLoaded.call(this)) return false;
     FROG.Core.jsonParams(PluginManager.parameters('FROG_Health'), $dataHealth);
-    console.log($dataHealth);
+    //console.log($dataHealth);
     return true;
 }
 
@@ -2434,6 +2437,15 @@ Window_BattleLog.prototype.displayDamage = function(target) {
 
     if (!target.result().missed && !target.result().evaded) {
         this.displayHealthHpDamage(target);
+    }
+}
+
+FROG.Health.Window_BattleLog_EndAction = Window_BattleLog.prototype.endAction;
+Window_BattleLog.prototype.endAction = function(subject) {
+    FROG.Health.Window_BattleLog_EndAction.call(this, subject);
+    var scene_battle = (this.parent && this.parent.parent) ? this.parent.parent : null;
+    if (scene_battle) {
+        scene_battle.setHealthHpIndex(-1);
     }
 }
 
@@ -3402,7 +3414,7 @@ Game_Battler.prototype.getHealthMhp = function (abbr) {
         }
 
         // State
-        if (health.adjustments.state && health.adjustments.state.length) {
+        if (health && health.adjustments && health.adjustments.state && health.adjustments.state.length) {
             for (var i=0; i<health.adjustments.state.length; i++) {
                 var stateAdjust = health.adjustments.state[i];
                 if (this.isStateAffected(stateAdjust.stateId) && stateAdjust.bonusPenalty) {
