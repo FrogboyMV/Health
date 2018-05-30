@@ -271,3 +271,5 @@ Credit Frogboy in your work.
 * Version 0.9.01
     * Fixed crash when adjustments property is deleted.
     * Fixed bug where enemy gauges don't disappear.
+* Version 0.9.02
+    * Fixed crash when battle status gauge is misconfigured.
