@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.01 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.02 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -539,6 +539,8 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * Version 0.9.01 - Bug fixes
  *     Fixed crash when adjustments property is deleted.
  *     Fixed bug where enemy gauges don't disappear.
+ * Version 0.9.02 - Bug Fix
+ *     Crashed when battle status gauge was misconfigured.
  *
  * ============================================================================
  *
@@ -3170,8 +3172,10 @@ if (FROG.Health.useHealthBattleStatus === true) {
 
     Window_BattleStatus.prototype.drawGauge = function(x, y, width, height, rate, color1, color2) {
         var fillW = Math.floor(width * rate);
-        this.contents.fillRect(x, y, width, height, this.gaugeBackColor());
-        this.contents.gradientFillRect(x+1, y+1, fillW-2, height-2, color1, color2);
+        if (!isNaN(fillW)) {
+            this.contents.fillRect(x, y, width, height, this.gaugeBackColor());
+            this.contents.gradientFillRect(x+1, y+1, fillW-2, height-2, color1, color2);
+        }
     }
 }
 
