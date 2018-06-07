@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.02 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.3 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -248,16 +248,6 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *
  *         Adjust Steps - Adds to the default Every X Steps.
  *
- *         Lower Health Range - Some conditions can only lower a value so far.
- *         Just regular cold weather isn’t going to kill anyone.  It might just
- *         lower their body temperature down to a certain point and no more.
- *         Thin air in the mountains won’t suffocate you but it may deplete some
- *         of your Oxygen.  This value is the lowest that the Condition can
- *         drop you to.
- *
- *         Upper Health Range - Same as the Lower Health Range but applies to
- *         the upper bound.
- *
  *         Immune - Disables Health adjustments when true.
  *
  *     Set Common Event - Common Event that will run when this Condition becomes
@@ -296,6 +286,13 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *         box except now you get a nice big, multi-line note box.  How freakin’
  *         sweet is that?
  *
+ *         Show Damage - Damage is shown in battle log and visibly affects the
+ *         target.  Sometimes, you may not want to show every different type of
+ *         damage during an attack.  Maybe getting hit with an attack wakes you
+ *         up a little and adds a small amount to your Rest HP.  For something
+ *         minor like this, you probably don’t need to display this information.
+ *         Turn this off in those situations.
+ *
  *         Flip Damage - If the damage type is set to HP Damage, it flips to HP
  *         Recovery for this Health attribute.  HP Recovery becomes HP Damage.
  *         Sometimes you may need to damage some health while recovering one or
@@ -333,6 +330,15 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *
  *     Class Id - The class these properties apply to.
  *
+ *     Custom Terms - Change the names for HP, MP and/or TP for this actor.
+ *     Sometimes, these terms just don’t fit for everyone, especially MP.
+ *         HP Name - Change the term HP for this actor.
+ *         HP Abbr - Change the term HP (abbr.) for this actor.
+ *         MP Name - Change the term HP for this actor.
+ *         MP Abbr - Change the term HP (abbr.) for this actor.
+ *         TP Name - Change the term HP for this actor.
+ *         TP Abbr - Change the term HP (abbr.) for this actor.
+ *
  *     Level Up - Configure how Health HP increases on level up.
  *
  *     Health Abbr - The Health abbreviation.  You know the drill by now.
@@ -350,7 +356,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * to display all of your Health HP gauges.  If you don’t want to use this, set
  * this to false.
  *
- * Use Custom Actor Terms - Custom Actor Terms for HP, MP and TP require
+ * Use Custom Terms - Custom Actor Terms for HP, MP and TP require
  * overwriting core code so this option must be explicitly enabled to use.
  * Overwriting core code can cause incompatibilities with other plugins so I’m
  * giving you way to shut this off if you need to.
@@ -407,6 +413,12 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *     popup, you can turn this on.
  *
  *     Enemy Gauge Width - Set the width of enemies visual Health gauges.
+ *
+ *     Enemy Gauge List - Global list of enemy gauges to display during battle.
+ *     Any abbreviations left off this list won't show in battle and enemies
+ *     will be immune to damage of this type. You can remove Health HP from
+ *     every enemy by not listing it here.
+ *
  *     Battle Status Config - If you’ve enabled Use Health Battle Status then
  *     the default actor battle status window will replaced with one more
  *     suitable.  This is where you can configure how this looks.  Every game is
@@ -541,6 +553,12 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *     Fixed bug where enemy gauges don't disappear.
  * Version 0.9.02 - Bug Fix
  *     Crashed when battle status gauge was misconfigured.
+ * Version 0.9.3 - Bug Fixes
+ *     Removed upper and lower range for Conditions. Too many issues with this.
+ *     Added a way to make all enemies immune to individual Health HP.
+ *     Added alert messages for when actors gain States due to Health levels.
+ *     Bug that made Items unusable.
+ *     Added Custom HP, MP, TP terms by class and enemies.
  *
  * ============================================================================
  *
@@ -585,6 +603,12 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @desc Define Health properties for classes.
  * @default []
  *
+ * @param Enemy Config
+ * @parent Settings
+ * @type struct<enemyConfigStruct>[]
+ * @desc Define Health properties for enemies.
+ * @default []
+ *
  * @param Use Health Battle Status
  * @parent Settings
  * @type boolean
@@ -593,7 +617,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @on Yes
  * @off No
  *
- * @param Use Custom Actor Terms
+ * @param Use Custom Terms
  * @parent Settings
  * @type boolean
  * @desc Custom Actor Terms for HP, MP and TP require overwriting core code so this option must be explicitly enabled to use.
@@ -631,6 +655,12 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @default true
  * @on Show
  * @off Hide
+ *
+ * @param Alert Config
+ * @parent Style
+ * @type struct<alertStruct>
+ * @desc Configure alert message window properties.
+ * @default {}
  *
  * @param Color Config
  * @parent Style
@@ -803,7 +833,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~stateHealthStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param State Id
@@ -845,10 +875,49 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @default 100
  * @min 0
  * @max 1000
+ *
+ * @param Alert When Added
+ * @type boolean
+ * @desc
+ * @default true
+ * @on Yes
+ * @off No
+ *
+ * @param Alert When Removed
+ * @type boolean
+ * @desc
+ * @default false
+ * @on Yes
+ * @off No
+ */
+/*~struct~alertStruct:
+ * @param Alert Position
+ * @parent Parameters
+ * @desc Window Position of the message box
+ * @type select
+ * @default Bottom
+ * @option Top
+ * @value Top
+ * @option Middle
+ * @value Middle
+ * @option Bottom
+ * @value Bottom
+ *
+ * @param Alert Background
+ * @parent Parameters
+ * @desc Background Type of the message box
+ * @type select
+ * @default Window
+ * @option Window
+ * @value Window
+ * @option Dim
+ * @value Dim
+ * @option Transparent
+ * @value Transparent
  */
 /*~struct~actorAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Actor Id
@@ -904,7 +973,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~classAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Class Id
@@ -960,7 +1029,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~raceAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Race Id
@@ -1016,7 +1085,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~itemAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Item Id
@@ -1065,7 +1134,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~weaponAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Weapon Id
@@ -1114,7 +1183,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~armorAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Armor Id
@@ -1163,7 +1232,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~stateAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param State Id
@@ -1212,7 +1281,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~enemyAdjustStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Enemy Id
@@ -1356,19 +1425,19 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * option Percentage
  * value PCT
  *
- * @param Lower Health Range
- * @type number
- * @desc The minimum percentage of Health HP this condition can lower an actor to.
- * @default 0
- * @min 0
- * @max 100
+ * param Lower Health Range
+ * type number
+ * desc The minimum percentage of Health HP this condition can lower an actor to.
+ * default 0
+ * min 0
+ * max 100
  *
- * @param Upper Health Range
- * @type number
- * @desc The maximum percentage of Health HP this condition can raise an actor to.
- * @default 100
- * @min 0
- * @max 100
+ * param Upper Health Range
+ * type number
+ * desc The maximum percentage of Health HP this condition can raise an actor to.
+ * default 100
+ * min 0
+ * max 100
  *
  * @param Immune
  * @type boolean
@@ -1403,6 +1472,13 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @type note
  * @desc This is the formula that will run when it's name is placed in a formula box.
  *
+ * @param Show Damage
+ * @type boolean
+ * @desc Damage is shown in battle log and visibly affects the target.
+ * @default true
+ * @on Yes
+ * @off No
+ *
  * @param Flip Damage
  * @type boolean
  * @desc Damage becomes Recovery or Recovery becomes Damage for this hit.
@@ -1419,17 +1495,52 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 /*~struct~actorConfigStruct:
  * @param Description
- * @type string
+ * @type text
  * @desc Description so you know what this entry is. Recommended but not required.
  *
  * @param Actor Id
  * @type actor
  * @desc Actor that these properties apply to.
+ * @default 0
+ *
+ * @param Custom Terms
+ * @type struct<customTermsStruct>
+ * @desc Change the names for HP, MP and/or TP. An entry for None acts as a global fallback.
+ * @default {}
+ */
+/*~struct~classConfigStruct:
+ * @param Description
+ * @type text
+ * @desc Description so you know what this entry is. Recommended but not required.
+ *
+ * @param Class Id
+ * @type class
+ * @desc Class that these properties apply to.
  * @default 1
  *
  * @param Custom Terms
  * @type struct<customTermsStruct>
- * @desc Change the names for HP, MP and/or TP for this actor.
+ * @desc Change the names for HP, MP and/or TP. An entry for None acts as a global fallback.
+ * @default {}
+ *
+ * @param Level Up
+ * @type struct<levelUpStruct>[]
+ * @desc Configure how Health HP increases on level up.
+ * @default []
+ */
+/*~struct~enemyConfigStruct:
+ * @param Description
+ * @type text
+ * @desc Description so you know what this entry is. Recommended but not required.
+ *
+ * @param Enemy Id
+ * @type enemy
+ * @desc Enemy that these properties apply to.
+ * @default 0
+ *
+ * @param Custom Terms
+ * @type struct<customTermsStruct>
+ * @desc Change the names for HP, MP and/or TP. An entry for None acts as a global fallback.
  * @default {}
  */
 /*~struct~customTermsStruct:
@@ -1462,21 +1573,6 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @type text
  * @desc Change the term TP (abbr.) for this actor.
  * @default
- */
-/*~struct~classConfigStruct:
- * @param Description
- * @type string
- * @desc Description so you know what this entry is. Recommended but not required.
- *
- * @param Class Id
- * @type class
- * @desc Class that these properties apply to.
- * @default 1
- *
- * @param Level Up
- * @type struct<levelUpStruct>[]
- * @desc Configure how Health HP increases on level up.
- * @default []
  */
 /*~struct~levelUpStruct:
  * @param Health Abbr
@@ -1521,7 +1617,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @value Health Stats
  *
  * @param Health Stats 1
- * @type string[]
+ * @type text[]
  * @desc If Health Stats chosen, list them in display order.
  * @default []
  *
@@ -1537,7 +1633,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @value Health Stats
  *
  * @param Health Stats 2
- * @type string[]
+ * @type text[]
  * @desc If Health Stats chosen, list them in display order.
  * @default []
  *
@@ -1553,7 +1649,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @value Health Stats
  *
  * @param Health Stats 3
- * @type string[]
+ * @type text[]
  * @desc If Health Stats chosen, list them in display order.
  * @default []
  */
@@ -1606,20 +1702,20 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @max 100
  *
  * @param Start Color
- * @type string
+ * @type text
  * @desc Hex color that this type of gauge starts with on the left.
  *
  * @param End Color
- * @type string
+ * @type text
  * @desc Hex color that this type of gauge ends with on the right.
  */
 /*~struct~gaugeColorStruct:
  * @param Start Color
- * @type string
+ * @type text
  * @desc Hex color that this gauge starts with on the left.
  *
  * @param End Color
- * @type string
+ * @type text
  * @desc Hex color that this gauge ends with on the right.
  */
 /*~struct~battleStruct:
@@ -1642,6 +1738,11 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @desc Width of the battle Health HP gauges.
  * @default 150
  * @min 50
+ *
+ * @param Enemy Gauge List
+ * @type text[]
+ * @desc Global list of enemy gauges to display during battle. Any abbreviations left off this list won't show in battle.
+ * @default []
  *
  * @param Battle Status Config
  * @type struct<battleStatusStruct>
@@ -1766,7 +1867,7 @@ var $dataHealth = {};
 // Add properties to Game_BattlerBase so that health can be used in formulas
 FROG.Health.prm = PluginManager.parameters('FROG_Health');
 FROG.Health.healthConfig = (FROG.Health.prm['Health Config']) ? JSON.parse(FROG.Health.prm['Health Config']) : [];
-FROG.Health.useCustomActorTerms = (FROG.Health.prm['Use Custom Actor Terms'] === "true");
+FROG.Health.useCustomTerms = (FROG.Health.prm['Use Custom Terms'] === "true");
 FROG.Health.useHealthBattleStatus = (FROG.Health.prm['Use Health Battle Status'] === "true");
 
 if (FROG.Health.prm['Add to Formulas'] === "true") {
@@ -1918,13 +2019,20 @@ Game_Enemy.prototype.setup = function (enemyId, x, y) {
             var immune = false;
 
             // Adjustments
+            if (!($dataHealth.battleConfig && $dataHealth.battleConfig.enemyGaugeList && $dataHealth.battleConfig.enemyGaugeList.length) || $dataHealth.battleConfig.enemyGaugeList.indexOf(abbr) === -1) {
+                immune = true;
+            }
+            /*else if ($dataHealth.battleConfig.enemyGaugeList.indexOf(abbr) === -1) {
+                immune = true;
+            }*/
+
             if (h.adjustments && h.adjustments.enemy && h.adjustments.enemy.length) {
                 var enemyAdjust = h.adjustments.enemy.filter(function (enemy) {
                     return enemy.enemyId == self._enemyId;
                 })[0] || null;
 
                 if (enemyAdjust) {
-                    immune = enemyAdjust.immune;
+                    immune = immune || enemyAdjust.immune;
                     maxHP += enemyAdjust.bonusPenalty || 0;
                 }
             }
@@ -1955,6 +2063,8 @@ Game_Enemy.prototype.setup = function (enemyId, x, y) {
             this._health[abbr] = {
                 hp: FROG.Core.randomInt(lowerHP, upperHP),
                 mhp: maxHP,
+                control: h.control,
+                drainAbbr: h.drainHealthAbbr,
                 immune: immune
             }
         }
@@ -1971,6 +2081,7 @@ FROG.Health.Game_Party_Initialize = Game_Party.prototype.initialize;
 Game_Party.prototype.initialize = function() {
     FROG.Health.Game_Party_Initialize.call(this);
     this._healthConditions = [];
+    this._healthAlert = "";
 }
 
 FROG.Health.Game_Party_IncreaseSteps = Game_Party.prototype.increaseSteps;
@@ -2037,8 +2148,8 @@ Game_Battler.prototype.healthStates = function (performHpAdjustments) {
             value: health.value,
             addPercentage: 100,
             removePercentage: 100,
-            lower: 0,
-            upper: 100,
+            //lower: 0,
+            //upper: 100,
             immune: false,
             visible: true
         }
@@ -2051,26 +2162,26 @@ Game_Battler.prototype.healthStates = function (performHpAdjustments) {
 
         // Adjust Health Values
         if (this.isActor() && performHpAdjustments === true && !adjust.immune && adjust.steps > 0 && adjust.value > 0 && partySteps % adjust.steps === 0) {
-            var lower = parseInt((adjust.lower / 100) * mhp);
-            var upper = parseInt((adjust.upper / 100) * mhp);
+            //var lower = parseInt((adjust.lower / 100) * mhp);
+            //var upper = parseInt((adjust.upper / 100) * mhp);
 
             switch (adjust.control) {
                 case "incremental":
                     // Increment HP to upper limit
                     this.gainHealth(abbr, adjust.value);
                     // If raised above upper limit, reset to upper limit
-                    if (this.getHealth(abbr).hp > upper) {
+                    /*if (this.getHealth(abbr).hp > upper) {
                         this.setHealth(abbr, { hp: upper });
-                    }
+                    }*/
                     break;
 
                 case "decremental":
                     // Decrement HP to upper limit
                     this.gainHealth(abbr, adjust.value * -1);
                     // If reduced below lower limit, reset to lower limit
-                    if (this.getHealth(abbr).hp < lower) {
+                    /*if (this.getHealth(abbr).hp < lower) {
                         this.setHealth(abbr, { hp: lower });
-                    }
+                    }*/
                     break;
 
                 case "equilibrium":
@@ -2098,6 +2209,32 @@ Game_Battler.prototype.healthStates = function (performHpAdjustments) {
         for (var k=0; k<health.stateManagement.length; k++) {
             var state = health.stateManagement[k];
             this.manageHealthState(state, hp, mhp, adjust);
+        }
+
+        // Show health alert
+        if ($gameParty._healthAlert && !$gameParty.inBattle()) {
+            if ($dataHealth.alertConfig) {
+                var alertPosition = 2;
+                var alertBackground = 0;
+
+                switch ($dataHealth.alertConfig.alertPosition) {
+                    case 'Top': alertPosition = 0; break;
+                    case 'Middle': alertPosition = 1; break;
+                    case 'Bottom': alertPosition = 2; break;
+                }
+
+                switch ($dataHealth.alertConfig.alertBackground) {
+                    case 'Window': alertBackground = 0; break;
+                    case 'Dim': alertBackground = 1; break;
+                    case 'Transparent': alertBackground = 2; break;
+                }
+
+                $gameMessage.setPositionType(alertPosition);
+                $gameMessage.setBackground(alertBackground);
+            }
+
+            $gameMessage.add($gameParty._healthAlert);
+            $gameParty._healthAlert = "";
         }
     }
 }
@@ -2152,6 +2289,12 @@ Game_Battler.prototype.getActiveConditions = function () {
 // Get relevant conditions to this health attribute
 Game_Battler.prototype.getConditionAdjustments = function (abbr, adjust) {
     var conditions = this.getActiveConditions();
+
+    // Make sure at least one condition is active before applying lower health range
+    /*if (conditions.length) {
+        adjust.lower = 100;
+    }*/
+
     for (var i=0; i<conditions.length; i++) {
         var adjustHealth = conditions[i].adjustHealth;
         for (var j=0; j<adjustHealth.length; j++) {
@@ -2160,8 +2303,8 @@ Game_Battler.prototype.getConditionAdjustments = function (abbr, adjust) {
                 adjust.control = (cond.control != "default") ? cond.control : adjust.control;
                 adjust.steps += cond.adjustSteps;
                 adjust.value += cond.adjustValue;
-                adjust.lower *= parseInt(cond.lowerHealthRange / 100) || 1;
-                adjust.upper *= parseInt(cond.upperHealthRange / 100) || 1;
+                //adjust.lower *= parseFloat(cond.lowerHealthRange / 100);
+                //adjust.upper *= parseFloat(cond.upperHealthRange / 100);
                 if (cond.immune) adjust.immune = true;
             }
         }
@@ -2314,22 +2457,31 @@ Game_Battler.prototype.manageHealthState = function (state, hp, pctMaxHP, adjust
     var addRate = (state.addPercentage / 100) * (adjust.addPercentage / 100);
     var remRate = (state.removePercentage / 100) * (adjust.removePercentage / 100);
 
+    // Remove State - Don't remove death state
+    if (state.stateId !== 1 && (hp < parseInt(minHP) || hp > parseInt(maxHP)) && this.isStateAffected(state.stateId)) {
+        // Calculate odds that state is removed
+        var chance = Math.random().toFixed(8);
+        if (chance <= remRate) {
+            var stateData = $dataStates[state.stateId];
+            if (this._actorId && state.alertWhenRemoved && stateData && stateData.message4 && $gameParty._healthAlert.indexOf(this._name + stateData.message4) == -1) {
+                $gameParty._healthAlert += this._name + stateData.message4 + '\n';
+            }
+            this.removeState(state.stateId);
+        }
+    }
+
     // Add State
-    if (hp >= parseInt(minHP) && hp <= parseInt(maxHP) && !adjust.immune) {
+    if (!adjust.immune && hp >= parseInt(minHP) && hp <= parseInt(maxHP)) {
         if (!this.isStateAffected(state.stateId)) {
             // Calculate odds that state applies
             var chance = Math.random().toFixed(8);
             if (chance <= addRate) {
+                var stateData = $dataStates[state.stateId];
+                if (this._actorId && state.alertWhenAdded && stateData && stateData.message1 && $gameParty._healthAlert.indexOf(this._name + stateData.message1) == -1) {
+                    $gameParty._healthAlert += this._name + stateData.message1 + '\n';
+                }
                 this.addState(parseInt(state.stateId));
             }
-        }
-    }
-    // Remove State - Don't remove death state
-    else if (state.stateId !== 1 && this.isStateAffected(state.stateId)) {
-        // Calculate odds that state is removed
-        var chance = Math.random().toFixed(8);
-        if (chance <= remRate) {
-            this.removeState(state.stateId);
         }
     }
 }
@@ -2337,6 +2489,20 @@ Game_Battler.prototype.manageHealthState = function (state, hp, pctMaxHP, adjust
 /* ---------------------------------------------------------------*\
                         Game Action
 \* -------------------------------------------------------------- */
+
+// Make sure item is usable when the Health meta tag is present.
+FROG.Health.Game_Action_HasItemAnyValidEffects = Game_Action.prototype.hasItemAnyValidEffects;
+Game_Action.prototype.hasItemAnyValidEffects = function(target, effect) {
+    var bOk = FROG.Health.Game_Action_HasItemAnyValidEffects.call(this, target, effect);
+    if (bOk === false) {
+        var item = this.item();
+        var formula = (item && item.damage) ? item.damage.formula : "";
+        if (formula.charAt(0) === "'" || formula.charAt(0) === '"') {
+            bOk = true;
+        }
+    }
+    return bOk;
+}
 
 FROG.Health.Game_Action_ExecuteHpDamage = Game_Action.prototype.executeHpDamage;
 Game_Action.prototype.executeHpDamage = function(target, value) {
@@ -2374,7 +2540,7 @@ Game_Action.prototype.executeHealthDamage = function(target, value) {
                         value = Math.max(eval(damage.formula), damage.min1Damage) * sign;
                         value = this.makeHealthDamageValue(target, value);
                         if (damage.flipDamage) value = value * -1;
-                        target.gainHealth(damage.healthAbbr, value * -1);
+                        target.gainHealth(this.healthDamageAbbr(damage.healthAbbr), value * -1, damage.showDamage);
                     }
                 }
             }
@@ -2383,6 +2549,12 @@ Game_Action.prototype.executeHealthDamage = function(target, value) {
     catch (e) {
 
     }
+}
+
+Game_Action.prototype.healthDamageAbbr = function(healthAbbr) {
+    if (healthAbbr.indexOf(",") === -1) return healthAbbr.toLowerCase().trim();
+    var abbrArr = healthAbbr.split(",");
+    return abbrArr[FROG.Core.randomInt(0, abbrArr.length-1)];
 }
 
 // Make Health Damage Value
@@ -2418,7 +2590,8 @@ Game_ActionResult.prototype.clear = function() {
     this.healthHpAffected = false;
     this.healthHpDamage = {
         hp: 0,
-        mp: 0
+        mp: 0,
+        show: ['hp', 'mp']
     }
 
     for (var i=0; i<$dataHealth.healthConfig.length; i++) {
@@ -2460,7 +2633,7 @@ Window_BattleLog.prototype.displayHealthHpDamage = function(target) {
 
         Object.keys(result.healthHpDamage).forEach(function(key, index) {
             var value = result.healthHpDamage[key];
-            if (value) {
+            if (value && result.healthHpDamage.show.indexOf(key) > -1) {
                 var healthConfig = $dataHealth.healthConfig.filter(function (config) {
                     return config.abbreviation.toLowerCase().trim() == key;
                 })[0] || null;
@@ -2516,20 +2689,10 @@ Window_BattleLog.prototype.makeHealthHpDamageText = function (target, key) {
     }
 }
 
-// Custom Actor Terms
-if (FROG.Health.useCustomActorTerms === true) {
+// Custom Terms
+if (FROG.Health.useCustomTerms === true) {
     Window_BattleLog.prototype.makeHpDamageText = function(target) {
-        var term = TextManager.hp;
-        if (target.isActor()) {
-            var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-                return config.actorId == target.actorId();
-            })[0];
-
-            if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.hPName) {
-                term = actorConfig.customTerms.hPName;
-            }
-        }
-
+        var term = FROG.Health.getCustomTerm(target, "hp", true);
         var result = target.result();
         var damage = result.hpDamage;
         var isActor = target.isActor();
@@ -2550,17 +2713,7 @@ if (FROG.Health.useCustomActorTerms === true) {
     }
 
     Window_BattleLog.prototype.makeMpDamageText = function(target) {
-        var term = TextManager.mp;
-        if (target.isActor()) {
-            var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-                return config.actorId == target.actorId();
-            })[0];
-
-            if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.mPName) {
-                term = actorConfig.customTerms.mPName;
-            }
-        }
-
+        var term = FROG.Health.getCustomTerm(target, "mp", true);
         var result = target.result();
         var damage = result.mpDamage;
         var isActor = target.isActor();
@@ -2580,17 +2733,7 @@ if (FROG.Health.useCustomActorTerms === true) {
     }
 
     Window_BattleLog.prototype.makeTpDamageText = function(target) {
-        var term = TextManager.tp;
-        if (target.isActor()) {
-            var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-                return config.actorId == target.actorId();
-            })[0];
-
-            if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.tPName) {
-                term = actorConfig.customTerms.tPName;
-            }
-        }
-
+        var term = FROG.Health.getCustomTerm(target, "tp", true);
         var result = target.result();
         var damage = result.tpDamage;
         var isActor = target.isActor();
@@ -2633,7 +2776,7 @@ Scene_Battle.prototype.createAllWindows = function() {
 
     for (var i=0; i<enemies.length; i++) {
         var enemy = enemies[i];
-        var w = $dataHealth.battleConfig.enemyGaugeWidth || 150;
+        var w = ($dataHealth.battleConfig) ? $dataHealth.battleConfig.enemyGaugeWidth : 150;
         var h = ($dataHealth.healthConfig.length + 2) * 18;
         var x = (enemy._screenX - (w / 2));
         var y = enemy._screenY;
@@ -2708,10 +2851,10 @@ Scene_Battle.prototype.updateBattleProcess = function() {
                     if (target && target.hp <= 0) {
                         var unit = bm._action.opponentsUnit();
                         var newTarget = unit.smoothTarget(this._targetIndex);
-                        targetIndex = newTarget.index();
+                        targetIndex = (newTarget) ? newTarget.index() : -1;
                     }
-                    this.setHealthHpIndex(targetIndex);
                 }
+                this.setHealthHpIndex(targetIndex);
             }
             else if (bm._phase == "turn") {
                 this.setHealthHpIndex(-1);
@@ -2770,7 +2913,6 @@ Window_HealthHpGauge.prototype.maxItems = function() {
 Window_HealthHpGauge.prototype.maxVisibleItems = function() {
     if (!this._enemy) return 0;
     var self = this;
-
     var n = 1;                      // HP
     if (this._enemy.mmp > 0) n++;   // MP
 
@@ -2781,6 +2923,7 @@ Window_HealthHpGauge.prototype.maxVisibleItems = function() {
             n++;
         }
     });
+
     return n;
 }
 
@@ -2833,13 +2976,15 @@ Window_HealthHpGauge.prototype.drawItem = function (index) {
         this._gindex = 0;
         var value = enemy.hp;
         var rate = parseFloat(value / enemy.mhp).toFixed(2);
-        this.drawHealth("HP", value, rate, index);
+        var term = FROG.Health.getCustomTerm(enemy, "hp", false);
+        this.drawHealth(term.toUpperCase(), value, rate, index);
     }
     // MP
     else if (index === 1) {
         var value = enemy.mp;
         var rate = parseFloat(value / enemy.mmp).toFixed(2);
-        this.drawHealth("MP", value, rate, index);
+        var term = FROG.Health.getCustomTerm(enemy, "mp", false);
+        this.drawHealth(term.toUpperCase(), value, rate, index);
     }
     // Health
     else {
@@ -2847,6 +2992,7 @@ Window_HealthHpGauge.prototype.drawItem = function (index) {
         var abbrArr = FROG.Core.getProp($dataHealth.healthConfig, "abbreviation") || [];
         var abbr = abbrArr[index - 2] || "";
         var health = healthConfig[abbr] || {};
+
         if (!health.immune) {
             var value = health.hp || 0;
             var rate = parseFloat(value / enemy.getHealthMhp(abbr)).toFixed(2) || 0;
@@ -2895,18 +3041,10 @@ Window_HealthHpGauge.prototype.drawText = function(text, x, y, maxWidth, align) 
 \* -------------------------------------------------------------- */
 
 // Custom Actor Terms
-if (FROG.Health.useCustomActorTerms === true) {
+if (FROG.Health.useCustomTerms === true) {
     Window_Base.prototype.drawActorHp = function(actor, x, y, width) {
-        var term = TextManager.hpA;
-        var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-            return config.actorId == actor.actorId();
-        })[0];
-
-        if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.hPAbbr) {
-            term = actorConfig.customTerms.hPAbbr;
-        }
-
         width = width || 186;
+        var term = FROG.Health.getCustomTerm(actor, "hp", false);
         var color1 = this.hpGaugeColor1();
         var color2 = this.hpGaugeColor2();
         this.drawGauge(x, y, width, actor.hpRate(), color1, color2);
@@ -2916,16 +3054,8 @@ if (FROG.Health.useCustomActorTerms === true) {
     }
 
     Window_Base.prototype.drawActorMp = function(actor, x, y, width) {
-        var term = TextManager.mpA;
-        var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-            return config.actorId == actor.actorId();
-        })[0];
-
-        if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.mPAbbr) {
-            term = actorConfig.customTerms.mPAbbr;
-        }
-
         width = width || 186;
+        var term = FROG.Health.getCustomTerm(actor, "mp", false);
         var color1 = this.mpGaugeColor1();
         var color2 = this.mpGaugeColor2();
         this.drawGauge(x, y, width, actor.mpRate(), color1, color2);
@@ -2935,16 +3065,8 @@ if (FROG.Health.useCustomActorTerms === true) {
     }
 
     Window_Base.prototype.drawActorTp = function(actor, x, y, width) {
-        var term = TextManager.tpA;
-        var actorConfig = $dataHealth.actorConfig.filter(function (config) {
-            return config.actorId == actor.actorId();
-        })[0];
-
-        if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms.tPAbbr) {
-            term = actorConfig.customTerms.tPAbbr;
-        }
-
         width = width || 96;
+        var term = FROG.Health.getCustomTerm(actor, "tp", false);
         var color1 = this.tpGaugeColor1();
         var color2 = this.tpGaugeColor2();
         this.drawGauge(x, y, width, actor.tpRate(), color1, color2);
@@ -3091,19 +3213,23 @@ if (FROG.Health.useHealthBattleStatus === true) {
                 if (abbr == "hp") {
                     var hp = actor.hp;
                     var mhp = actor.mhp;
+                    var term = FROG.Health.getCustomTerm(actor, "hp", false);
                 }
                 else if (abbr == "mp") {
                     var hp = actor.mp;
                     var mhp = actor.mmp;
+                    var term = FROG.Health.getCustomTerm(actor, "mp", false);
                 }
                 else if (abbr == "tp") {
                     var hp = actor.tp;
                     var mhp = 100;
+                    var term = FROG.Health.getCustomTerm(actor, "tp", false);
                 }
                 else {
                     var actorHealth = actor.getHealth(abbr);
                     var hp = actorHealth.hp;
                     var mhp = actor.getHealthMhp(abbr);
+                    var term = abbr;
                     visible = actor.isHealthVisible(abbr);
                 }
 
@@ -3113,7 +3239,7 @@ if (FROG.Health.useHealthBattleStatus === true) {
                     this.drawGauge(rect.x, rect.y, rect.width, rect.height, rate, color[0], color[1]);
 
                     if (gauge.showName) {
-                        this.drawText(abbr.toUpperCase(), rect.x+this.leftPadding(), rect.y+this.topPadding(), rect.width-this.leftPadding(), rect.height-this.topPadding(), "left");
+                        this.drawText(term.toUpperCase(), rect.x+this.leftPadding(), rect.y+this.topPadding(), rect.width-this.leftPadding(), rect.height-this.topPadding(), "left");
                     }
 
                     if (gauge.showValue) {
@@ -3514,7 +3640,7 @@ Game_Party.prototype.setHealth = function (abbr, object) {
  * @param {string} abbr - The abbreviation used to identify a health (required)
  * @param {number or string} value - Number or a string of a number with a % at the end
  */
-Game_Battler.prototype.gainHealth = function (abbr, value) {
+Game_Battler.prototype.gainHealth = function (abbr, value, show) {
     abbr = (abbr) ? abbr.toLowerCase().trim() : "";
     value = parseInt(value) || 0;
 
@@ -3567,7 +3693,6 @@ Game_Battler.prototype.gainHealth = function (abbr, value) {
                         var excessHP = Math.max((health.hp + value) * -1, 0);
                         break;
                     case "incremental":
-                        //var drainMhp = this.getHealthMhp(drainAbbr);
                         var excessHP = Math.max((health.hp + value) - mhp, 0);
                         break;
                 }
@@ -3575,16 +3700,19 @@ Game_Battler.prototype.gainHealth = function (abbr, value) {
                 if (excessHP > 0) {
                     var control = this.getHealth(drainAbbr).control || "decremental";
                     switch (control) {
-                        case "decremental": this.gainHealth(drainAbbr, excessHP * -1); break;
-                        case "incremental": this.gainHealth(drainAbbr, excessHP); break;
+                        case "decremental": this.gainHealth(drainAbbr, excessHP * -1, show); break;
+                        case "incremental": this.gainHealth(drainAbbr, excessHP, show); break;
                     }
                 }
             }
 
             this.setHealth(abbr, { hp: health.hp + value });
         }
-        this._result.healthHpDamage[abbr] = value * -1;
         this._result.healthHpAffected = true;
+        this._result.healthHpDamage[abbr] = value * -1;
+        if (show) {
+            this._result.healthHpDamage['show'].push(abbr);
+        }
         this.healthStates(false);
     }
 }
@@ -3730,4 +3858,80 @@ Game_Interpreter.prototype.pluginCommand = function (command, args) {
                 break;
         }
     }
+}
+
+/** Gets custom term for actor, class or enemy
+ * @param {object} battler - Game_Battler object (actor or enemy) Required
+ * @param {string} abbr - Abbreviation to look up custom term (hp, mp or tp) Required
+ * @param {boolean} returnFull - Return full name if true or abbreviated name when false
+ * @returns Returns custom term in order found (Actor -> Class -> System) or (Enemy -> System)
+ */
+FROG.Health.getCustomTerm = function (battler, abbr, returnFull) {
+    abbr = (abbr) ? abbr.toString().toLowerCase().trim() : "";
+    if (!battler || !abbr || !(abbr == "hp" || abbr == "mp" || abbr == "tp")) return "ERR";
+
+    // Get property name and default term from abbreviation
+    var abbrProp = "";
+    switch (abbr) {
+        case "hp":
+            if (returnFull) {
+                term = TextManager.hp;
+                abbrProp = "hPName";
+            }
+            else {
+                term = TextManager.hpA;
+                abbrProp = "hPAbbr";
+            }
+            break;
+        case "mp":
+            if (returnFull) {
+                term = TextManager.mp;
+                abbrProp = "mPName";
+            }
+            else {
+                term = TextManager.mpA;
+                abbrProp = "mPAbbr";
+            }
+            break;
+        case "tp":
+            if (returnFull) {
+                term = TextManager.tp;
+                abbrProp = "tPName";
+            }
+            else {
+                term = TextManager.tpA;
+                abbrProp = "tPAbbr";
+            }
+            break;
+    }
+
+    if (abbrProp) {
+        if (battler._actorId) {
+            var actorConfig = $dataHealth.actorConfig.filter(function (config) {
+                return config.actorId == battler.actorId();
+            })[0] || {};
+
+            var classConfig = $dataHealth.classConfig.filter(function (config) {
+                return config.classId == battler._classId;
+            })[0] || {};
+
+            if (!FROG.Core.isEmpty(actorConfig) && !FROG.Core.isEmpty(actorConfig.customTerms) && actorConfig.customTerms[abbrProp]) {
+                term = actorConfig.customTerms[abbrProp];
+            }
+            else if (!FROG.Core.isEmpty(classConfig) && !FROG.Core.isEmpty(classConfig.customTerms) && classConfig.customTerms[abbrProp]) {
+                term = classConfig.customTerms[abbrProp];
+            }
+        }
+        else if (battler._enemyId) {
+            var enemyConfig = $dataHealth.enemyConfig.filter(function (config) {
+                return config.enemyId == battler._enemyId;
+            })[0] || {};
+
+            if (!FROG.Core.isEmpty(enemyConfig) && !FROG.Core.isEmpty(enemyConfig.customTerms) && enemyConfig.customTerms[abbrProp]) {
+                term = enemyConfig.customTerms[abbrProp];
+            }
+        }
+    }
+
+    return term;
 }
