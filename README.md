@@ -287,10 +287,9 @@ Credit Frogboy in your work.
 * Version 0.9.02
     * Fixed crash when battle status gauge is misconfigured.
 * Version 0.9.3
-    * Fixed bug with Condition's lower health limit.
     * Added a way to make all enemies immune to individual Health HP.
     * Added alert messages for when actors gain States due to Health levels.
-    * Items bug where items weren't usable.
     * Added Custom HP, MP, TP terms by class and enemies.
-    * Fixed bug with Drain Health feature.
     * Added random Health damage in formulas.
+    * Fixed bug where items weren't usable.
+    * Fixed bug with Drain Health feature.
