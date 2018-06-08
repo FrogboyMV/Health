@@ -1,0 +1,4 @@
+[
+null,
+{"id":1,"list":[{"code":111,"indent":0,"parameters":[12,"$gameActors.actor(1).isAlive() && $gameActors.actor(1).isEquipped($dataArmors[4]) || $gameActors.actor(2).isAlive() && $gameActors.actor(2).isEquipped($dataArmors[4]) || $gameActors.actor(3).isAlive() && $gameActors.actor(3).isEquipped($dataArmors[4]) || $gameActors.actor(4).isAlive() && $gameActors.actor(4).isEquipped($dataArmors[4])"]},{"code":108,"indent":1,"parameters":["Someone alive is wearing the ring"]},{"code":0,"indent":1,"parameters":[]},{"code":411,"indent":0,"parameters":[]},{"code":101,"indent":1,"parameters":["Aragorn",0,0,2]},{"code":401,"indent":1,"parameters":["One of us needs to carry The Ring."]},{"code":351,"indent":1,"parameters":[]},{"code":0,"indent":1,"parameters":[]},{"code":412,"indent":0,"parameters":[]},{"code":230,"indent":0,"parameters":[10]},{"code":0,"indent":0,"parameters":[]}],"name":"Carry Ring","switchId":1,"trigger":2}
+]

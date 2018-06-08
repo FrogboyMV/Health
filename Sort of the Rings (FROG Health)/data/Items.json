@@ -1,0 +1,7 @@
+[
+null,
+{"id":1,"animationId":42,"consumable":true,"damage":{"critical":false,"elementId":0,"formula":"'bread'","type":3,"variance":20},"description":"Heals 20 HP and 100 Food HP.","effects":[],"hitType":0,"iconIndex":266,"itypeId":1,"name":"Lambas Bread","note":"","occasion":0,"price":0,"repeats":1,"scope":7,"speed":0,"successRate":100,"tpGain":0},
+{"id":2,"animationId":41,"consumable":true,"damage":{"critical":false,"elementId":0,"formula":"'water'","type":3,"variance":20},"description":"Heals 20 HP, 60 Water HP and lowers Body Temp by 10.","effects":[],"hitType":0,"iconIndex":176,"itypeId":1,"name":"Water","note":"","occasion":0,"price":0,"repeats":1,"scope":7,"speed":0,"successRate":100,"tpGain":0},
+{"id":3,"animationId":0,"consumable":true,"damage":{"critical":false,"elementId":0,"formula":"'coffee'","type":3,"variance":20},"description":"The darkest, richest coffee in all of Brittle Earth\ncan only be brewed in the depths of Mount Duum.","effects":[],"hitType":0,"iconIndex":226,"itypeId":1,"name":"Dark Lord Roast Coffee","note":"","occasion":0,"price":0,"repeats":1,"scope":7,"speed":0,"successRate":100,"tpGain":0},
+{"id":4,"animationId":0,"consumable":true,"damage":{"critical":false,"elementId":0,"formula":"0","type":0,"variance":20},"description":"","effects":[],"hitType":0,"iconIndex":0,"itypeId":1,"name":"","note":"","occasion":0,"price":0,"repeats":1,"scope":7,"speed":0,"successRate":100,"tpGain":0}
+]

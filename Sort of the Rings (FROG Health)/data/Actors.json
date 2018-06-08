@@ -1,0 +1,7 @@
+[
+null,
+{"id":1,"battlerName":"Aragorn","characterIndex":0,"characterName":"Hero","classId":1,"equips":[1,2,2],"faceIndex":0,"faceName":"Hero","traits":[],"initialLevel":1,"maxLevel":1,"name":"Araborn","nickname":"","note":"","profile":""},
+{"id":2,"battlerName":"Legolas","characterIndex":2,"characterName":"Hero","classId":4,"equips":[4,2,2],"faceIndex":2,"faceName":"Hero","traits":[],"initialLevel":1,"maxLevel":1,"name":"Faygolas","nickname":"","note":"","profile":""},
+{"id":3,"battlerName":"Gimili","characterIndex":3,"characterName":"Hero","classId":2,"equips":[2,3,2],"faceIndex":3,"faceName":"Hero","traits":[],"initialLevel":1,"maxLevel":1,"name":"Brimli","nickname":"","note":"","profile":""},
+{"id":4,"battlerName":"Gandalf","characterIndex":1,"characterName":"Hero","classId":3,"equips":[3,1,2],"faceIndex":1,"faceName":"Hero","traits":[],"initialLevel":1,"maxLevel":1,"name":"Grandalf","nickname":"","note":"","profile":""}
+]
