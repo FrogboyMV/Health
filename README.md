@@ -57,10 +57,14 @@ This plugin has a crap-ton of parameters so that you can configure this system w
   * **Type** - Indicates whether Min HP and Max HP represent exact values or percentage of max health HP.
     * **Explicit Value** - Min and Max HP are used as exact values.  If Max HP is 30, the State will apply at exactly 30 HP even if the actor’s maximum Health HP is 200.
     * **Percentage** - This uses the percentage of an actor’s maximum Health HP.  If Max HP is set to 30 and their maximum Health HP is 200, the State will apply at 60 HP.
-* **Min HP** - The minimum Health HP that this State will be applied.
-* **Max HP** - The maximum Health HP that this State will be applied.
-* **Add Percentage** - Odds per step that this State will be applied to any actor that falls within the min/max range.
-* **Remove Percentage** - Odds per step that this State will be removed for any actor that falls outside of the min/max range.
+  * **Min HP** - The minimum Health HP that this State will be applied.
+  * **Max HP** - The maximum Health HP that this State will be applied.
+  * **Bonus/Penalty** - Static bonus or penalty that applies to Max HP.  If you wanted a piece of equipment to add +30 to a Health HP’s 
+Max, add that here.
+  * **Add Percentage** - Odds per step that this State will be applied to any actor that falls within the min/max range.
+  * **Remove Percentage** - Odds per step that this State will be removed for any actor that falls outside of the min/max range.
+  * **Alert When Added** - Alerts the player via messagebox when an actor gains a State due to health levels.
+  * **Alert When Removed** - Same as above but for when a State is removed.
 * **Adjustments** - Different actors, classes, races, states, equipment and items can affect how State Management functions.  A Sea Elf may be able to hold their breath three times as long as a human underwater.  Flame Armor can help you withstand extreme heat.  Paladins have extraordinary willpower.  All of these work mostly the same.  They just apply to different aspects of the game.
   * **Description** - Description so you know what this entry is. Recommended but not required.
   * **Id** - The actor, class, race, state, item, weapon or armor that adjusts the default health State Management values.
@@ -68,16 +72,15 @@ This plugin has a crap-ton of parameters so that you can configure this system w
   * **Steps** - The default Every X Steps will be adjusted by this amount.
   * **Add Percentage** - The default Add Percentage will be adjusted by this percent.  This value is multiplied by the State Management’s Add Percentage as well as all other adjustments.  100% means that it stays the same.  50% mean that it cuts it in half and 200% would double the odds.  This works like applying multiple Elemental Chance traits.
   * **Remove Percentage** - Works just like Add Percent but applies to the Remove Percentage chance.
-  * **Bonus/Penalty** - Static bonus or penalty that applies to Max HP.  If you wanted a piece of equipment to add +30 to a Health HP’s Max, add that here.
-  * **Immune** - Disables Health adjustments when true.  If you disabled an Oxygen attribute, your character could effectively breath underwater.  Their Oxygen HP wouldn’t change while disabled.
-  * **Visible** - Actors, class and races can be configured to hide this Health HP attribute so that this character doesn’t appear to have it at all.  Make sure you set Immune to false if if you want to completely eliminate this Health attribute for this character.
+* **Immune** - Disables Health adjustments when true.  If you disabled an Oxygen attribute, your character could effectively breath underwater.  Their Oxygen HP wouldn’t change while disabled.
+* **Visible** - Actors, class and races can be configured to hide this Health HP attribute so that this character doesn’t appear to have it at all.  Make sure you set Immune to false if if you want to completely eliminate this Health attribute for this character.
 * **Enemy Parameters** - If your actors have to deal with various levels of Health, their foes should need to as well.  Enemies don’t typically persist beyond battle so this parameter just allows you to set the default Min and Max percentage range for all enemies.  If this is not set, the range will default to the optimum 50% range according to the gauges Control.  A Decremental gauge will be 50%-100%; an Incremental will be 0%-50%; and Equilibrium defaults to 25%-75%.  These defaults can be overridden here.
   * **Min Percent** -  Minimum percentage of Health HP enemies start battle with.
   * **Max Percent** -  Maximum percentage of Health HP enemies start battle with.
 * **Show in Battle Log** - Show or hide damage to this Health in the Battle Log.
 * **Recover All** - Health HP recovers to optimum value when Recover All command is executed.
 * **Battle Gauge Color** - Customize the battle gauge color.
-* **Drain Health Abbr** - Normally, when a Health HP bar runs out, that’s it.  Most of the time, something really bad happens like they die, fall asleep, go insane or whatever.  But maybe you don’t want it to be so drastic.  Maybe running out food or water doesn’t kill you but starts draining your normal HP.  In systems where normal HP is split into different Health HP stats like (Head, Body, Arms and Legs), you probably want negative health in those areas to start damaging the character’s normal HP.  By specifying an abbreviation, when this Health is at critical levels as defined by the Control parameter, excess is applied to the other Health stat.  You can also use HP or MP here.
+* **Drain Health Abbr** - Normally, when a Health HP bar runs out, that’s it.  Most of the time, something really bad happens like they die, fall asleep, go insane or whatever.  But maybe you don’t want it to be so drastic.  Maybe running out food or water doesn’t kill you but starts draining your normal HP.  In systems where normal HP is split into different Health HP stats like (Head, Body, Arms and Legs), you probably want negative health in those areas to start damaging the character’s normal HP.  By specifying an abbreviation, when this Health is at critical levels as defined by the Control parameter, excess is applied to the other Health stat.  You can also use HP or MP here.  This only works for Incremental and Decremental control types at this time.
 
 ![status](/img/snap04.png)
 
@@ -105,7 +108,7 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 **Formula Config** - By now, you might be wondering how these Health attributes work in battle.  For the most part, they work just like normal HP.  This changes some dynamics, though.  If you have Rest HP, why have a Sleep spell that succeeds or fails based on random chance?  You could make Sleep do Rest damage now.  Charm and Fascination could attack the mind.  You could even have a suffocation spell suck the air out your enemy’s lungs (assuming they have lungs).  Your Skill list is about to get a lot more interesting.
 * **Name** - The name of this formula.  The editor doesn’t have any way to handle a Skill that does damage to HP, Food and Water.  So to make this possible, you can now enter the name of a formula here and place that name within quotes in the formula box of a Skill or Item.  If you enter ‘quake’ or “quake” into the formula box (with the quotes), the Skill or Item will reference the formula with the name quake.
 * **Damage** - Define however many damage formulas you need and which aspects of Health are affected.  Use hp, mp or tp if you want to affect these attributes.
-  * **Health Abbr** - The Health abbreviation this formula applies to.
+  * **Health Abbr** - The Health abbreviation this formula applies to.  Use hp or mp to affect those HP types.  If you want this formula to affect a random type of Health, list all of the abbreviations seperated by commas.  For instance, if your Health Abbr. is *head, body, arms, legs*, the plugin will randomly pick one of the four.  You can even list an abbreviation multiple times to shift the odds.  Say you did *hp, hp, hp, psyche*.  There would be a 75% chance that HP would be affected and a 25% that Psyche would get damaged.
   * **Formula** - Enter the formula just as you would in the normal formula box except now you get a nice big, multi-line note box.  How freakin’ sweet is that?
   * **Flip Damage** - If the damage type is set to HP Damage, it flips to HP Recovery for this Health attribute.  HP Recovery becomes HP Damage.  Sometimes you may need to damage some health while recovering one or more others (or vise versa).
   * **Min 1 Damage** - This formula will always do at least 1 damage.
@@ -127,11 +130,17 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 **Class Config** - You said that these were just like real HP.  That means that my characters can gain Health HP as they level up, right?  Yep, of course they can.
 * **Description** - Description so you know what this entry is. Recommended but not required.
 * **Class Id** - The class these properties apply to.
+* **Custom Terms** - Change the names for HP, MP and/or TP for this class.
 * **Level Up** - Configure how Health HP increases on level up.
   * **Health Abbr** - The Health abbreviation.  You know the drill by now.
   * **Starting Max HP** - Use this to overwrite the default Max HP. Leave at 0 to use the default as defined in Health Config.
   * **Lower Level Gain** - Each level, an actor with this class will gain at least this amount of additional Health HP.
   * **Upper Level Gain** - Each level, an actor with this class will gain no more than this amount of additional Health HP.
+
+**Enemy Config** - Configure enemy specific properties.
+* **Description** - Description so you know what this entry is. Recommended but not required.
+* **Enemy Id** - The actor these properties apply to.
+* **Custom Terms** - Change the names for HP, MP and/or TP for this enemy.
 
 **Use Health Battle Status** - The actor battle status window has been reimagined to display all of your Health HP gauges.  If you don’t want to use this, set this to false.
 
@@ -147,6 +156,8 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 ## Style
 
 **Show Max Health** - The default Status screen now shows the different levels of health alongside the actor’s attributes and equipment.  The Health HP is shown as Current HP/Max HP.  If you only want to show the current HP, turn this off.
+
+**Alert Config** - Configure alert message window properties.  When an actor is affected by State due to health level 
 
 **Color Config** - The default Status screen’s attributes and Health HP now display with color gauges.  You can configure those gauges here.
 * **Attributes** - Colors for Attribute gauges.
@@ -164,6 +175,7 @@ This plugin has a crap-ton of parameters so that you can configure this system w
 * **Use Enemy HP Gauge** - Enable or disable Health HP Gauges in battle.
 * **Use Damage Popup** - Normally, HP damage pops up when damage is done.  If you are using the visual gauges, you probably want to suppress the default behavior.  But if you still want the normal HP damage numbers to popup, you can turn this on.
 * **Enemy Gauge Width** - Set the width of enemies visual Health gauges.
+* **Enemy Gauge List** - Global list of enemy gauges to display during battle.  Any abbreviations left off this list won't show in battle and enemies will be immune to damage of this type. You can remove Health HP from every enemy by not listing it here.
 * **Battle Status Config** - If you’ve enabled Use Health Battle Status then the default actor battle status window will replaced with one more suitable.  This is where you can configure how this looks.  Every game is different and there’s no telling how many Health attributes you are using in your game and which ones are relevant in battle.
   * **Actor Face Height** - Height in pixels for the actor’s face image.
   * **Gauge Rows** - Number of rows for Health gauges.
@@ -273,3 +285,11 @@ Credit Frogboy in your work.
     * Fixed bug where enemy gauges don't disappear.
 * Version 0.9.02
     * Fixed crash when battle status gauge is misconfigured.
+* Version 0.9.3
+    * Fixed bug with Condition's lower health limit.
+    * Added a way to make all enemies immune to individual Health HP.
+    * Added alert messages for when actors gain States due to Health levels.
+    * Items bug where items weren't usable.
+    * Added Custom HP, MP, TP terms by class and enemies.
+    * Fixed bug with Drain Health feature.
+    * Added random Health damage in formulas.
