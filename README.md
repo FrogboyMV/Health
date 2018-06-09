@@ -294,3 +294,5 @@ Credit Frogboy in your work.
     * Added random Health damage in formulas.
     * Fixed bug where items weren't usable.
     * Fixed bug with Drain Health feature.
+* Version 0.9.31
+    * Added configurable draw rate for the actor battle status window.
