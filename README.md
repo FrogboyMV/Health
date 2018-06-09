@@ -186,10 +186,11 @@ Max, add that here.
   * **Top Padding** - Adjust the padding on the top if you need to push the text down some.
   * **Font Size** - Font size for battle gauge text.
   * **Gauges** - Configure the gauges in the default Battle Status Window.  They will appear in the order that they are listed.
-  * **Health Abbr** - The Health abbreviation.
-  * **Columns** - Number of columns that this Health gauge takes up.
-  * **Show Name** - Show the health abbreviation on the battle gauge.
-  * **Show Value** - Show the health value on the battle gauge.
+    * **Health Abbr** - The Health abbreviation.
+    * **Columns** - Number of columns that this Health gauge takes up.
+    * **Show Name** - Show the health abbreviation on the battle gauge.
+    * **Show Value** - Show the health value on the battle gauge.
+ * **Draw Rate** - Draw actor battle status window every X frames.  If you have a lot of gauges and text to draw, it's best to skip a few frames to ensure that everything runs fast.
 
 ![status](/img/snap02.png)
 
