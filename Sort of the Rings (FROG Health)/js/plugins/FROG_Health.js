@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.31 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.32 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -461,6 +461,10 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *
  *             Show Value - Show the health value on the battle gauge.
  *
+ *         Draw Rate - Draw actor battle status window every X frames.  If you
+ *         have a lot of gauges and text to draw, it's best to skip a few frames
+ *         to ensure that everything runs fast.
+ *
  * Status Window - The default RPG Maker MV status window can be configured to
  * show the Health information.
  *
@@ -571,6 +575,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *     Fixed bug with Drain Health feature.
  *     Added random Health damage in formulas.
  * Version 0.9.31 - Updated default paramters
+ * Version 0.9.32 - Added configurable draw rate for actor battle status window.
  *
  * ============================================================================
  *
@@ -684,7 +689,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @parent Style
  * @type struct<battleStruct>
  * @desc Configure how gauges look.
- * @default {"Use Enemy HP Gauge":"true","Use Damage Popup":"true","Enemy Gauge Width":"150","Enemy Gauge List":"[\"food\",\"water\",\"rest\",\"oxygen\",\"psyche\",\"temp\"]","Battle Status Config":"{\"Actor Face Height\":\"60\",\"Gauge Rows\":\"5\",\"Gauge Columns\":\"2\",\"Name Left Padding\":\"1\",\"Value Right Padding\":\"6\",\"Top Padding\":\"0\",\"Font Size\":\"12\",\"Gauges\":\"[\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"hp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"2\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"mp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"tp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"food\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"water\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"rest\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"oxygen\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"psyche\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"temp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\"]\"}"}
+ * @default {"Use Enemy HP Gauge":"true","Use Damage Popup":"true","Enemy Gauge Width":"150","Enemy Gauge List":"[\"food\",\"water\",\"rest\",\"oxygen\",\"psyche\",\"temp\"]","Battle Status Config":"{\"Actor Face Height\":\"60\",\"Gauge Rows\":\"5\",\"Gauge Columns\":\"2\",\"Name Left Padding\":\"1\",\"Value Right Padding\":\"6\",\"Top Padding\":\"0\",\"Font Size\":\"12\",\"Gauges\":\"[\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"hp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"2\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"mp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"tp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"food\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"water\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"rest\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"oxygen\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"psyche\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\",\\\"{\\\\\\\"Health Abbr\\\\\\\":\\\\\\\"temp\\\\\\\",\\\\\\\"Columns\\\\\\\":\\\\\\\"1\\\\\\\",\\\\\\\"Show Name\\\\\\\":\\\\\\\"true\\\\\\\",\\\\\\\"Show Value\\\\\\\":\\\\\\\"true\\\\\\\"}\\\"]\",\"Draw Rate\":\"3\"}"}
  *
  * @param Status Window
  * @parent Style
@@ -1811,6 +1816,12 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * @type struct<battleStatusGaugeStruct>[]
  * @desc Configure the gauges in the default Battle Status Window
  * @default ["{\"Health Abbr\":\"hp\",\"Columns\":\"2\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"mp\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"tp\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"food\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"water\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"rest\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"oxygen\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"psyche\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}","{\"Health Abbr\":\"temp\",\"Columns\":\"1\",\"Show Name\":\"true\",\"Show Value\":\"true\"}"]
+ *
+ * @param Draw Rate
+ * @type number
+ * @desc Draw actor battle status window every X frames.
+ * @default 3
+ * @min 1
  */
 /*~struct~battleStatusGaugeStruct:
  * @param Health Abbr
@@ -3093,7 +3104,6 @@ if (FROG.Health.useCustomTerms === true) {
                         Window BattleStatus
 \* -------------------------------------------------------------- */
 
-var ccc = 0;
 if (FROG.Health.useHealthBattleStatus === true) {
     Window_BattleStatus.prototype.initialize = function() {
         var width = this.windowWidth();
@@ -3102,6 +3112,8 @@ if (FROG.Health.useHealthBattleStatus === true) {
         var y = Graphics.boxHeight - height;
         Window_Selectable.prototype.initialize.call(this, x, y, width, height);
         this._config = ($dataHealth.battleConfig && $dataHealth.battleConfig.battleStatusConfig) ? $dataHealth.battleConfig.battleStatusConfig : {};
+        this._config.drawRate = this._config.drawRate || 3;
+        this._frame = 0;
         this.refresh();
         this.openness = 0;
     }
@@ -3167,9 +3179,12 @@ if (FROG.Health.useHealthBattleStatus === true) {
     }
 
     Window_BattleStatus.prototype.refresh = function() {
-        this.contents.clear();
-        this.drawAllItems();
-        ccc = ccc + 1;
+        if (this._frame % this._config.drawRate === 0) {
+            this.contents.clear();
+            this.drawAllItems();
+        }
+        this._frame++;
+        if (this._frame >= 2000000) this._frame = 0;
     }
 
     Window_BattleStatus.prototype.drawAllItems = function() {
