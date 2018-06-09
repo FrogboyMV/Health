@@ -295,4 +295,6 @@ Credit Frogboy in your work.
     * Fixed bug where items weren't usable.
     * Fixed bug with Drain Health feature.
 * Version 0.9.31
+    * Updated default paramters.
+* Version 0.9.32
     * Added configurable draw rate for the actor battle status window.
