@@ -298,3 +298,4 @@ Credit Frogboy in your work.
     * Updated default paramters.
 * Version 0.9.32
     * Added configurable draw rate for the actor battle status window.
+* Version 0.9.33 - Fixed issues with health immunity.
