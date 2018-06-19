@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.32 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.33 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -576,6 +576,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  *     Added random Health damage in formulas.
  * Version 0.9.31 - Updated default paramters
  * Version 0.9.32 - Added configurable draw rate for actor battle status window.
+ * Version 0.9.33 - Fixed issues with health immunity.
  *
  * ============================================================================
  *
@@ -2084,7 +2085,7 @@ Game_Enemy.prototype.setup = function (enemyId, x, y) {
 
             // Initialize HP
             this._health[abbr] = {
-                hp: FROG.Core.randomInt(lowerHP, upperHP),
+                hp: (!immune) ? FROG.Core.randomInt(lowerHP, upperHP) : maxHP,
                 mhp: maxHP,
                 control: h.control,
                 drainAbbr: h.drainHealthAbbr,
@@ -2160,7 +2161,7 @@ Game_Battler.prototype.healthStates = function (performHpAdjustments) {
 
     for (var i=0; i<$dataHealth.healthConfig.length; i++) {
         var health = $dataHealth.healthConfig[i];
-        if (!health || !health.abbreviation) continue;
+        if (!health || !health.abbreviation || this._health[health.abbreviation].immune) continue;
 
         var abbr = health.abbreviation;
         var hp = this.getHealth(abbr).hp;
@@ -3670,6 +3671,7 @@ Game_Party.prototype.setHealth = function (abbr, object) {
 Game_Battler.prototype.gainHealth = function (abbr, value, show) {
     abbr = (abbr) ? abbr.toLowerCase().trim() : "";
     value = parseInt(value) || 0;
+    var immune = false;
 
     if (abbr && isNaN(value) === false && this._health && (this._health[abbr] || abbr == "hp" || abbr == "mp")) {
         var vType = "number";
@@ -3706,41 +3708,48 @@ Game_Battler.prototype.gainHealth = function (abbr, value, show) {
         }
         else {
             var health = this.getHealth(abbr);
-            var drainAbbr = health.drainAbbr || "";
-            var mhp = this.getHealthMhp(abbr);
-            if (vType == "percentage") {
-                value = mhp * (value / 100);
-            }
+            immune = health.immune;
 
-            // Drain from other health if this runs out
-            if (drainAbbr) {
-                var excessHP = 0;
-                switch (health.control) {
-                    case "decremental":
-                        var excessHP = Math.max((health.hp + value) * -1, 0);
-                        break;
-                    case "incremental":
-                        var excessHP = Math.max((health.hp + value) - mhp, 0);
-                        break;
+            if (!immune) {
+                var drainAbbr = health.drainAbbr || "";
+                var mhp = this.getHealthMhp(abbr);
+                if (vType == "percentage") {
+                    value = mhp * (value / 100);
                 }
 
-                if (excessHP > 0) {
-                    var control = this.getHealth(drainAbbr).control || "decremental";
-                    switch (control) {
-                        case "decremental": this.gainHealth(drainAbbr, excessHP * -1, show); break;
-                        case "incremental": this.gainHealth(drainAbbr, excessHP, show); break;
+                // Drain from other health if this runs out
+                if (drainAbbr) {
+                    var excessHP = 0;
+                    switch (health.control) {
+                        case "decremental":
+                            var excessHP = Math.max((health.hp + value) * -1, 0);
+                            break;
+                        case "incremental":
+                            var excessHP = Math.max((health.hp + value) - mhp, 0);
+                            break;
+                    }
+
+                    if (excessHP > 0) {
+                        var control = this.getHealth(drainAbbr).control || "decremental";
+                        switch (control) {
+                            case "decremental": this.gainHealth(drainAbbr, excessHP * -1, show); break;
+                            case "incremental": this.gainHealth(drainAbbr, excessHP, show); break;
+                        }
                     }
                 }
-            }
 
-            this.setHealth(abbr, { hp: health.hp + value });
+                this.setHealth(abbr, { hp: health.hp + value });
+            }
         }
-        this._result.healthHpAffected = true;
-        this._result.healthHpDamage[abbr] = value * -1;
-        if (show) {
-            this._result.healthHpDamage['show'].push(abbr);
+
+        if (!immune) {
+            this._result.healthHpAffected = true;
+            this._result.healthHpDamage[abbr] = value * -1;
+            if (show) {
+                this._result.healthHpDamage['show'].push(abbr);
+            }
+            this.healthStates(false);
         }
-        this.healthStates(false);
     }
 }
 
