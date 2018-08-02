@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.33 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v0.9.4 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -577,6 +577,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * Version 0.9.31 - Updated default paramters
  * Version 0.9.32 - Added configurable draw rate for actor battle status window.
  * Version 0.9.33 - Fixed issues with health immunity.
+ * Version 0.9.4 - Yanfly Damage Core compatibility.
  *
  * ============================================================================
  *
@@ -1903,7 +1904,7 @@ if (FROG.Health.prm['Add to Formulas'] === "true") {
             evalStr += "" +
                 param + ": { " +
                 "   get: function () { " +
-                "      return this.getHelath('" + param + "').hp || 0; " +
+                "      return this.getHealth('" + param + "').hp || 0; " +
                 "   }, " +
                 "   configurable: true " +
                 "}, ";
@@ -2526,6 +2527,14 @@ Game_Action.prototype.hasItemAnyValidEffects = function(target, effect) {
         }
     }
     return bOk;
+}
+
+// Fix for Yanfly Damage Core and any other plugin that overwrites this method and can't account for named formulas
+FROG.Health.Game_Action_evalDamageFormula = Game_Action.prototype.evalDamageFormula;
+Game_Action.prototype.evalDamageFormula = function(target) {
+    var item = this.item();
+    if (item && item.damage && item.damage.formula && (item.damage.formula.charAt(0) === "'" || item.damage.formula.charAt(0) === '"')) return 0;
+    FROG.Health.Game_Action_evalDamageFormula.call(this, target);
 }
 
 FROG.Health.Game_Action_ExecuteHpDamage = Game_Action.prototype.executeHpDamage;
