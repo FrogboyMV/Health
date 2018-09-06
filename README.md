@@ -1,10 +1,5 @@
 # Health
 
-## Update
-
-I still have some work to do on the demo and I'm fairly certain that there are some bugs I haven't found yet but this should be very close to what 1.0 version will look like.  I don't expect any major changes short of bug fixes for now so feel free to use it and let me know if you run into any issues.
-
-
 ## Introduction
 
 RPG Maker MV gives you a lot of fine-grained control over your game, but it’s primarily geared towards the creation of the JRPGs.  This means that certain aspects of some of the classic WRPGs that I grew up with, like Ultima and Dungeons & Dragons, aren’t supported by default.  Well, I’d like to fix that!  
@@ -281,22 +276,4 @@ Credit Frogboy in your work.
 
 ## Changelog
 
-* Version 0.9 - Beta release
-* Version 0.9.01
-    * Fixed crash when adjustments property is deleted.
-    * Fixed bug where enemy gauges don't disappear.
-* Version 0.9.02
-    * Fixed crash when battle status gauge is misconfigured.
-* Version 0.9.3
-    * Added a way to make all enemies immune to individual Health HP.
-    * Added alert messages for when actors gain States due to Health levels.
-    * Added Custom HP, MP, TP terms by class and enemies.
-    * Added random Health damage in formulas.
-    * Fixed bug where items weren't usable.
-    * Fixed bug with Drain Health feature.
-* Version 0.9.31
-    * Updated default paramters.
-* Version 0.9.32
-    * Added configurable draw rate for the actor battle status window.
-* Version 0.9.33 - Fixed issues with health immunity.
-* Version 0.9.4 - Yanfly Damage Core compatibility.
+* Version 1.0.0 - Initial release
