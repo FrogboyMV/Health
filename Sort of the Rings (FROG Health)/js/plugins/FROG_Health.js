@@ -11,7 +11,7 @@ FROG.Health = FROG.Health || {};
 if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
 
 /*:
- * @plugindesc FROG_Health v0.9.4 Extended Health system for more fine-grained detail.
+ * @plugindesc FROG_Health v1.0.0 Extended Health system for more fine-grained detail.
  * @author Frogboy
  *
  * @help
@@ -560,24 +560,7 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  * Changelog
  * ============================================================================
  *
- * Version 0.9 - Beta
- * Version 0.9.01 - Bug fixes
- *     Fixed crash when adjustments property is deleted.
- *     Fixed bug where enemy gauges don't disappear.
- * Version 0.9.02 - Bug Fix
- *     Crashed when battle status gauge was misconfigured.
- * Version 0.9.3 - Bug Fixes
- *     Removed upper and lower range for Conditions. Too many issues with this.
- *     Added a way to make all enemies immune to individual Health HP.
- *     Added alert messages for when actors gain States due to Health levels.
- *     Bug that made Items unusable.
- *     Added Custom HP, MP, TP terms by class and enemies.
- *     Fixed bug with Drain Health feature.
- *     Added random Health damage in formulas.
- * Version 0.9.31 - Updated default paramters
- * Version 0.9.32 - Added configurable draw rate for actor battle status window.
- * Version 0.9.33 - Fixed issues with health immunity.
- * Version 0.9.4 - Yanfly Damage Core compatibility.
+ * Version 1.0.0 - Initial Release
  *
  * ============================================================================
  *
@@ -1884,18 +1867,14 @@ if (!Imported.FROG_Core) console.error("This plugin requires FROG_Core");
  */
 
 var $dataHealth = {};
+FROG.Core.jsonParams(PluginManager.parameters('FROG_Health'), $dataHealth);
+$dataHealth.healthConfig = $dataHealth.healthConfig || [];
 
 /* ---------------------------------------------------------------*\
                         Add to Formulas
 \* -------------------------------------------------------------- */
 
-// Add properties to Game_BattlerBase so that health can be used in formulas
-FROG.Health.prm = PluginManager.parameters('FROG_Health');
-FROG.Health.healthConfig = (FROG.Health.prm['Health Config']) ? JSON.parse(FROG.Health.prm['Health Config']) : [];
-FROG.Health.useCustomTerms = (FROG.Health.prm['Use Custom Terms'] === "true");
-FROG.Health.useHealthBattleStatus = (FROG.Health.prm['Use Health Battle Status'] === "true");
-
-if (FROG.Health.prm['Add to Formulas'] === "true") {
+if ($dataHealth.addtoFormulas === "true") {
     var bOk = false;
     var evalStr = "Object.defineProperties (Game_BattlerBase.prototype, {";
     for (var i=0; i<FROG.Health.healthConfig.length; i++) {
@@ -1913,19 +1892,18 @@ if (FROG.Health.prm['Add to Formulas'] === "true") {
     }
     evalStr = evalStr.slice(0, -1) + " });";
     if (bOk) eval(evalStr);
-    i = bOk = evalStr = param = FROG.Health.prm = FROG.Health.healthConfig = undefined;
+    i = bOk = evalStr = param = undefined;
 }
 
 /* ---------------------------------------------------------------*\
                             Data Manager
 \* -------------------------------------------------------------- */
 
-FROG.Health.DataManager_IsDatabaseLoaded = DataManager.isDatabaseLoaded;
-DataManager.isDatabaseLoaded = function () {
-    if (!FROG.Health.DataManager_IsDatabaseLoaded.call(this)) return false;
+FROG.Health.DataManager_setupNewGame = DataManager.setupNewGame;
+DataManager.setupNewGame = function () {
+    FROG.Health.DataManager_setupNewGame.call(this);
     FROG.Core.jsonParams(PluginManager.parameters('FROG_Health'), $dataHealth);
-    //console.log($dataHealth);
-    return true;
+    console.log($dataHealth);
 }
 
 // Save File
@@ -2723,7 +2701,7 @@ Window_BattleLog.prototype.makeHealthHpDamageText = function (target, key) {
 }
 
 // Custom Terms
-if (FROG.Health.useCustomTerms === true) {
+if ($dataHealth.useCustomTerms === true) {
     Window_BattleLog.prototype.makeHpDamageText = function(target) {
         var term = FROG.Health.getCustomTerm(target, "hp", true);
         var result = target.result();
@@ -3074,7 +3052,7 @@ Window_HealthHpGauge.prototype.drawText = function(text, x, y, maxWidth, align) 
 \* -------------------------------------------------------------- */
 
 // Custom Actor Terms
-if (FROG.Health.useCustomTerms === true) {
+if ($dataHealth.useCustomTerms === true) {
     Window_Base.prototype.drawActorHp = function(actor, x, y, width) {
         width = width || 186;
         var term = FROG.Health.getCustomTerm(actor, "hp", false);
@@ -3114,7 +3092,7 @@ if (FROG.Health.useCustomTerms === true) {
                         Window BattleStatus
 \* -------------------------------------------------------------- */
 
-if (FROG.Health.useHealthBattleStatus === true) {
+if ($dataHealth.useHealthBattleStatus === true) {
     Window_BattleStatus.prototype.initialize = function() {
         var width = this.windowWidth();
         var height = this.windowHeight();
