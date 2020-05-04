@@ -2512,7 +2512,7 @@ FROG.Health.Game_Action_evalDamageFormula = Game_Action.prototype.evalDamageForm
 Game_Action.prototype.evalDamageFormula = function(target) {
     var item = this.item();
     if (item && item.damage && item.damage.formula && (item.damage.formula.charAt(0) === "'" || item.damage.formula.charAt(0) === '"')) return 0;
-    FROG.Health.Game_Action_evalDamageFormula.call(this, target);
+    return FROG.Health.Game_Action_evalDamageFormula.call(this, target);
 }
 
 FROG.Health.Game_Action_ExecuteHpDamage = Game_Action.prototype.executeHpDamage;
